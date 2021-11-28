@@ -64,21 +64,27 @@ local list_themes = function(return_type)
 end
 local colors = list_themes()
 
-local picker = pickers.new {
-    prompt = "jajajaj",
-    finder = finders.new_table(colors),
-    sorter = sorters.get_generic_fuzzy_sorter({}),
+local function colorschemelive()
+    pickers.new {
+        prompt_title = "Press Enter to Apply",
+        finder = finders.new_table(colors),
+        sorter = sorters.get_generic_fuzzy_sorter({}),
 
-    attach_mappings = function(prompt_bufnr, map)
-        map("i", "<CR>", enter)
-        map("i", "<C-n>", next_color)
-        map("i", "<C-p>", prev_color)
+        attach_mappings = function(prompt_bufnr, map)
+            map("i", "<CR>", enter)
+            map("i", "<C-n>", next_color)
+            map("i", "<C-p>", prev_color)
 
-        map("n", "<CR>", enter)
-        map("n", "j", next_color)
-        map("n", "k", prev_color)
-        return true
-    end,
+            map("n", "<CR>", enter)
+            map("n", "j", next_color)
+            map("n", "k", prev_color)
+            return true
+        end,
+    }:find()
+end
+
+return require'telescope'.register_extension {
+    exports = {
+        colorschemelive = colorschemelive,
+    }
 }
-
-picker:find()
