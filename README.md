@@ -1,1 +1,1 @@
-# telescope-colorscheme-live
+check out my config to see it in action
