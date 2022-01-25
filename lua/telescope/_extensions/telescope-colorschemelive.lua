@@ -14,10 +14,24 @@ local function enter(prompt_bufnr)
 
     vim.g.curr_theme = selection[1]
     require"colors".init(selection[1])
+
     package.loaded["plugins.bufferline"] = nil
     require"plugins.bufferline"
+    package.loaded["plugins.statusline"] = nil
+    require"plugins.statusline"
+
+    -- change kitty theme
+    file = vim.fn.expand("~/.config/kitty/kitty.conf")
+    new = "include ./themes/" .. selection[1] .. ".conf"
+    job_cmd = "sed -i '$d' " .. file .. "; echo " .. new .. " >> " .. file
+    vim.fn.jobstart(job_cmd)
+    job_cmd = "xdotool key ctrl+shift+F5"
+    vim.fn.jobstart(job_cmd)
 
     actions.close(prompt_bufnr)
+    if vim.bo.filetype == "alpha" then
+        vim.cmd"set showtabline=0"
+    end
 end
 
 local function next_color(prompt_bufnr)
@@ -27,6 +41,8 @@ local function next_color(prompt_bufnr)
     require"colors".init(selection[1])
     package.loaded["plugins.bufferline"] = nil
     require"plugins.bufferline"
+    package.loaded["plugins.statusline"] = nil
+    require"plugins.statusline"
 end
 
 local function prev_color(prompt_bufnr)
@@ -36,6 +52,8 @@ local function prev_color(prompt_bufnr)
     require"colors".init(selection[1])
     package.loaded["plugins.bufferline"] = nil
     require"plugins.bufferline"
+    package.loaded["plugins.statusline"] = nil
+    require"plugins.statusline"
 end
 
 local list_themes = function(return_type)
@@ -62,29 +80,32 @@ local list_themes = function(return_type)
    end
    return themes
 end
-local colors = list_themes()
 
-local function colorschemelive()
-    pickers.new {
-        prompt_title = "Press Enter to Apply",
-        finder = finders.new_table(colors),
-        sorter = sorters.get_generic_fuzzy_sorter({}),
+-- local picker = pickers.new(require"telescope.themes".get_dropdown(), {
+local picker = pickers.new({
+    prompt_title = "Themes",
+    prompt_prefix = "    ",
+    -- selection_caret = "  ",
+    selection_caret = " ↪ ",
+    -- layout_strategy = "vertical",
+    -- layout_config = {
+    --     height = 0.9,
+    --     width = 0.9,
+    -- },
+    finder = finders.new_table(list_themes()),
+    sorter = sorters.get_generic_fuzzy_sorter({}),
 
-        attach_mappings = function(prompt_bufnr, map)
-            map("i", "<CR>", enter)
-            map("i", "<C-n>", next_color)
-            map("i", "<C-p>", prev_color)
+    attach_mappings = function(prompt_bufnr, map)
+        map("i", "<CR>", enter)
+        map("i", "<C-n>", next_color)
+        map("i", "<C-p>", prev_color)
 
-            map("n", "<CR>", enter)
-            map("n", "j", next_color)
-            map("n", "k", prev_color)
-            return true
-        end,
-    }:find()
-end
+        map("n", "<CR>", enter)
+        map("n", "j", next_color)
+        map("n", "k", prev_color)
 
-return require'telescope'.register_extension {
-    exports = {
-        colorschemelive = colorschemelive,
-    }
-}
+        return true
+    end,
+})
+
+picker:find()
