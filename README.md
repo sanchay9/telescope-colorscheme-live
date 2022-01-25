@@ -1,1 +1,1 @@
-check out my config to see it in action
+check out my config to see it in action :D
