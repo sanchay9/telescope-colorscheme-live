@@ -89,31 +89,35 @@ local list_themes = function(return_type)
    return themes
 end
 
--- local picker = pickers.new(require"telescope.themes".get_dropdown(), {
-local picker = pickers.new({
-    prompt_title = "Themes",
-    prompt_prefix = "    ",
-    -- selection_caret = "  ",
-    selection_caret = " ↪ ",
-    -- layout_strategy = "vertical",
-    -- layout_config = {
-    --     height = 0.9,
-    --     width = 0.9,
-    -- },
-    finder = finders.new_table(list_themes()),
-    sorter = sorters.get_generic_fuzzy_sorter({}),
+local function colorscheme_live()
+    -- pickers.new(require"telescope.themes".get_dropdown(), {
+    pickers.new({
+        prompt_title = "Select a Theme",
+        prompt_prefix = "    ",
+        -- selection_caret = "  ",
+        selection_caret = " ↪ ",
+        -- layout_strategy = "vertical",
+        -- layout_config = {
+        --     height = 0.9,
+        --     width = 0.9,
+        -- },
+        finder = finders.new_table(list_themes()),
+        sorter = sorters.get_generic_fuzzy_sorter({}),
 
-    attach_mappings = function(prompt_bufnr, map)
-        map("i", "<CR>", enter)
-        map("i", "<C-n>", next_color)
-        map("i", "<C-p>", prev_color)
+        attach_mappings = function(prompt_bufnr, map)
+            map("i", "<CR>", enter)
+            map("i", "<C-n>", next_color)
+            map("i", "<C-p>", prev_color)
 
-        map("n", "<CR>", enter)
-        map("n", "j", next_color)
-        map("n", "k", prev_color)
+            map("n", "<CR>", enter)
+            map("n", "j", next_color)
+            map("n", "k", prev_color)
 
-        return true
-    end,
-})
+            return true
+        end,
+    }):find()
+end
 
-picker:find()
+return telescope.register_extension {
+    exports = { colorscheme_live = colorscheme_live },
+}
