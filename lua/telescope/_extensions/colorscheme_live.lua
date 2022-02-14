@@ -1,3 +1,9 @@
+local present, telescope = pcall(require, "telescope")
+
+if not present then
+    error "telescope.nvim is not found"
+end
+
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local pickers = require "telescope.pickers"
@@ -39,6 +45,7 @@ local function next_color(prompt_bufnr)
     local selection = action_state.get_selected_entry()
 
     require"colors".init(selection[1])
+
     package.loaded["plugins.bufferline"] = nil
     require"plugins.bufferline"
     package.loaded["plugins.statusline"] = nil
@@ -50,6 +57,7 @@ local function prev_color(prompt_bufnr)
     local selection = action_state.get_selected_entry()
 
     require"colors".init(selection[1])
+
     package.loaded["plugins.bufferline"] = nil
     require"plugins.bufferline"
     package.loaded["plugins.statusline"] = nil
