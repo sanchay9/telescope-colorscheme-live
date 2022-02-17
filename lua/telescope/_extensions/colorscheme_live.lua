@@ -34,6 +34,14 @@ local function enter(prompt_bufnr)
     job_cmd = "xdotool key ctrl+shift+F5"
     vim.fn.jobstart(job_cmd)
 
+    -- change polybar theme
+    file = vim.fn.expand("~/.config/polybar/colors")
+    new = "include-file = ~/.config/polybar/themes/" .. selection[1] .. ".ini"
+    job_cmd = "sed -i '$d' " .. file .. "; echo " .. new .. " >> " .. file
+    vim.fn.jobstart(job_cmd)
+    job_cmd = "~/.config/polybar/launch.sh"
+    vim.fn.jobstart(job_cmd)
+
     actions.close(prompt_bufnr)
     if vim.bo.filetype == "alpha" then
         vim.cmd"set showtabline=0"
